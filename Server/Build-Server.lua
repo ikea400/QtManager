@@ -12,12 +12,12 @@ project "Server"
       "Source",
 
 	  -- Include Common
-	  "../Common/Source"
+	  "../Common/Source",
    }
 
    links
    {
-      "Common"
+      "Common",
    }
 
    targetdir ("../Binaries/" .. OutputDir .. "/%{prj.name}")

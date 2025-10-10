@@ -1,3 +1,0 @@
-[submodule "Vendor/drogon"]
-	path = Vendor/drogon
-	url = https://github.com/drogonframework/drogon
