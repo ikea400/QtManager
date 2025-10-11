@@ -1,16 +1,18 @@
+#include "UI/LoginMainWindow/LoginMainWindow.h"
+
 #include "Common/Utils.h"
 
 #include <iostream>
 
-#include <QtCore/qstring.h>
+#include <QtWidgets/QApplication>
 
-int main()
+int main(int argc, char* argv[])
 {
-	Ikea400::Utils::DoSomethingUseful(42);
-	std::cout << "Hello, World! from App" << std::endl;
+	QApplication a(argc, argv);
 
-	QString qtString = "Hello from Qt!";
-	std::cout << qtString.toStdString() << std::endl;
+	LoginMainWindow loginWindow;
 
-	return 0;
+	loginWindow.show();
+
+	return a.exec();
 }

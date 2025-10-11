@@ -10,7 +10,7 @@ project "App"
 
    qt.enable()
    qtuseexternalinclude ( true )
-   qtmodules { "core", "gui", "widgets" }
+   qtmodules { "core", "gui", "widgets", "network", "svg" }
    qtpath "E:/Qt/6.8.0/msvc2022_64"
    qtprefix "Qt6"
 
