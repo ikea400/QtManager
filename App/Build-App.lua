@@ -55,3 +55,9 @@ project "App"
        optimize "On"
        symbols "Off"
        flags { "linktimeoptimization" }
+
+   filter "configurations:Test"
+        defines { "TEST", "NDEBUG" }
+        runtime "Release"
+        optimize "On"
+        symbols "Off"

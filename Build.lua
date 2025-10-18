@@ -1,7 +1,7 @@
 -- premake5.lua
 workspace "QtManager"
    architecture "x64"
-   configurations { "Debug", "Release", "Dist" }
+   configurations { "Debug", "Release", "Dist", "Test" }
    startproject "App"
 
    -- Workspace-wide build options for MSVC
