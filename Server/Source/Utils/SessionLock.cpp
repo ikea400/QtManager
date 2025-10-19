@@ -36,14 +36,14 @@ template <typename SessionPtrType, bool ASYNC>
 bool SessionLock<SessionPtrType, ASYNC>::TryLock(std::chrono::system_clock::duration lockTimeout)
 {
 	if (m_eLoggingLevel >= LOG_ALL)
-		LOG_INFO << std::format("SessionLock<SessionPtrType, ASYNC>::TryLock '{}:{}'\n", m_szName, m_nUniqueId);
+		LOG_INFO << std::format("SessionLock<SessionPtrType, ASYNC>::TryLock '{}:{}'", m_szName, m_nUniqueId);
 
 	using time_point = std::chrono::system_clock::time_point;
 	m_pSession->modify<LockDataPtr>(m_szName, [this, lockTimeout](LockDataPtr& lockData) {
 
 		if (!lockData) {
 			if (m_eLoggingLevel >= LOG_ALL)
-				LOG_INFO << std::format("SessionLock<SessionPtrType, ASYNC>::TryLock '{}' creating lock data\n", m_szName);
+				LOG_INFO << std::format("SessionLock<SessionPtrType, ASYNC>::TryLock '{}' creating lock data", m_szName);
 			lockData = std::make_shared<LockData>();
 		}
 
@@ -51,21 +51,21 @@ bool SessionLock<SessionPtrType, ASYNC>::TryLock(std::chrono::system_clock::dura
 		time_point timeout = lockData->timeout;
 		if (timeout > now) {
 			if (m_eLoggingLevel >= LOG_ALL)
-				LOG_INFO << std::format("SessionLock<SessionPtrType, ASYNC>::TryLock '{}' tried to lock but was locked\n", m_szName);
+				LOG_INFO << std::format("SessionLock<SessionPtrType, ASYNC>::TryLock '{}' tried to lock but was locked", m_szName);
 			return;
 		}
 
 
 		if (timeout > now) {
 			if (m_eLoggingLevel >= LOG_ALL)
-				LOG_INFO << std::format("SessionLock<SessionPtrType, ASYNC>::TryLock '{}' tried to lock but was locked\n", m_szName);
+				LOG_INFO << std::format("SessionLock<SessionPtrType, ASYNC>::TryLock '{}' tried to lock but was locked", m_szName);
 			return;
 		}
 
 		if (timeout != time_point{}) {
 			m_bWasTimeout = true;
 			if (m_eLoggingLevel >= LOG_ERR) {
-				LOG_INFO << std::format("SessionLock<SessionPtrType, ASYNC>::TryLock '{}' found timeout lock\n", m_szName);
+				LOG_INFO << std::format("SessionLock<SessionPtrType, ASYNC>::TryLock '{}' found timeout lock", m_szName);
 			}
 		}
 
@@ -74,7 +74,7 @@ bool SessionLock<SessionPtrType, ASYNC>::TryLock(std::chrono::system_clock::dura
 		lockData->ownerId = m_nUniqueId;
 		m_bOwnLock = true;
 		if (m_eLoggingLevel >= LOG_ALL)
-			LOG_INFO << std::format("SessionLock<SessionPtrType, ASYNC>::TryLock '{}' locked until {}\n", m_szName, m_tpOurTimeout);
+			LOG_INFO << std::format("SessionLock<SessionPtrType, ASYNC>::TryLock '{}' locked until {}", m_szName, m_tpOurTimeout);
 	});
 
 	return m_bOwnLock;
@@ -83,6 +83,8 @@ bool SessionLock<SessionPtrType, ASYNC>::TryLock(std::chrono::system_clock::dura
 template <typename SessionPtrType, bool ASYNC>
 void SessionLock<SessionPtrType, ASYNC>::Unlock()
 {
+	if (m_eLoggingLevel >= LOG_ALL)
+		LOG_INFO << std::format("SessionLock<SessionPtrType, ASYNC>::Unlock called by '{}' for '{}:{}'", m_szName, m_szName, m_nUniqueId);
 	if (!m_bOwnLock) {
 		if (m_eLoggingLevel >= LOG_ERR)
 			LOG_INFO << std::format("SessionLock<SessionPtrType, ASYNC>::Unlock called by '{}' when lock not owned", m_szName);
@@ -96,19 +98,19 @@ void SessionLock<SessionPtrType, ASYNC>::Unlock()
 		if (m_tpOurTimeout < now)
 		{
 			if (m_eLoggingLevel >= LOG_ERR)
-				LOG_ERROR << "CSessionLock '" << m_szName << "' timeout\n";
+				LOG_ERROR << "CSessionLock '" << m_szName << "' timeout";
 			return;
 		}
 
 		if (lockData->timeout == time_point{}) {
 			if (m_eLoggingLevel >= LOG_ERR)
-				LOG_FATAL << "CSessionLock '" << m_szName << "' supposed to own lock but is not locked\n";
+				LOG_FATAL << "CSessionLock '" << m_szName << "' supposed to own lock but is not locked";
 			return;
 		}
 
 		if (lockData->timeout != m_tpOurTimeout) {
 			if (m_eLoggingLevel >= LOG_ERR)
-				LOG_FATAL << "CSessionLock '" << m_szName << "' supposed to own lock but doesnt\n";
+				LOG_FATAL << "CSessionLock '" << m_szName << "' supposed to own lock but doesnt";
 			return;
 		}
 

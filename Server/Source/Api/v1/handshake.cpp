@@ -1,32 +1,28 @@
 #include "handshake.h"
+
 #include "../../Utils/SessionLock.h"
+#include "../../Utils/ResponseBuilder.h"
 
 void api::v1::Handshake::Hello(const HttpRequestPtr& req, std::function<void(const HttpResponsePtr&)>&& callback)
 {
 	const SessionPtr& session = req->getSession();
 
+	auto builder = ikea400::ResponseBuilder::Get(req, __FUNCTION__);
+
 	try {
-		ikea400::SessionLock lock(session, "sm_szSessionLockName");
+		ikea400::SessionLock lock(session, kSessionLockName);
 
 		if (!lock.TryLock()) {
-			auto response = drogon::HttpResponse::newHttpJsonResponse(Json::Value("Please wait between request"));
-			response->setStatusCode(k408RequestTimeout);
-			callback(response);
-			return;
+			return callback(builder->Failure("Another request is already in progress for this session.", k423Locked));
 		}
 
-		auto response = drogon::HttpResponse::newHttpJsonResponse(Json::Value("Handshake started"));
-		response->setStatusCode(k200OK);
-		callback(response);
-		return;
+		return callback(builder->Success());
 	}
 	catch (const std::exception& e) {
-		LOG_ERROR << __FUNCTION__ " exception: " << e.what() << "\n";
+		LOG_ERROR << __FUNCTION__ " exception: " << e.what();
 	}
 
-	auto response = drogon::HttpResponse::newHttpJsonResponse(Json::Value("Internal server error"));
-	response->setStatusCode(k500InternalServerError);
-	callback(response);
+	return callback(builder->InternalServerError());
 }
 
 void api::v1::Handshake::Exchange(const HttpRequestPtr& req, std::function<void(const HttpResponsePtr&)>&& callback)

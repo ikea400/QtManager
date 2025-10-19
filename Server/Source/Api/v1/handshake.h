@@ -22,14 +22,14 @@ namespace api::v1
 		METHOD_LIST_END
 
 		SessionDataPtr GetSessionData(const SessionPtr& session) {
-			return session->get<SessionDataPtr>(sm_szSessionDataName);
+			return session->get<SessionDataPtr>(kSessionDataName);
 		}
 	protected:
 		void Hello(const HttpRequestPtr& req, std::function<void(const HttpResponsePtr&)>&& callback);
 		void Exchange(const HttpRequestPtr& req, std::function<void(const HttpResponsePtr&)>&& callback);
 		void Verify(const HttpRequestPtr& req, std::function<void(const HttpResponsePtr&)>&& callback);
 	private:
-		static constexpr const std::string_view sm_szSessionDataName = "handshake_data";
-		static constexpr const std::string_view sm_szSessionLockName = "handshake_lock";
+		static constexpr const std::string_view kSessionDataName = "handshake_data";
+		static constexpr const std::string_view kSessionLockName = "handshake_lock";
 	};
 }
